@@ -21,15 +21,17 @@ import com.squareup.sample.tictactoe.RealGameLog
 import com.squareup.sample.tictactoe.RunGameReactor
 import com.squareup.sample.tictactoe.TakeTurnsReactor
 import com.squareup.workflow.WorkflowPool
-import timber.log.Timber
 import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
+import timber.log.Timber
 
 /**
  * Pretend generated code of a pretend DI framework.
  */
 internal class ShellComponent {
 
-  val workflowPool = WorkflowPool()
+  private val workflowPoolFactory get() = WorkflowPool.Factory()
+
+  val workflowPool by lazy { workflowPoolFactory.create() }
 
   private val authService = AuthService()
 

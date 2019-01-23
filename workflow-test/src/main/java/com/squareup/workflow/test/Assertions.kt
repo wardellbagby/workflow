@@ -31,7 +31,7 @@ fun <S : Any, E : Any, O : Any> Reactor<S, E, O>.assertTransition(
   event: E,
   toState: S
 ) {
-  val workflow = launch(fromState, WorkflowPool())
+  val workflow = launch(fromState, WorkflowPool.Factory().create())
   @Suppress("UNCHECKED_CAST")
   val observer = workflow.state.test() as TestObserver<S>
   workflow.sendEvent(event)
@@ -46,7 +46,7 @@ fun <S : Any, E : Any, O : Any> Reactor<S, E, O>.assertFinish(
   event: E,
   output: O
 ) {
-  val workflow = launch(fromState, WorkflowPool())
+  val workflow = launch(fromState, WorkflowPool.Factory().create())
   @Suppress("UNCHECKED_CAST")
   val observer = workflow.result.test() as TestObserver<O>
   workflow.sendEvent(event)

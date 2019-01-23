@@ -36,7 +36,12 @@ import kotlin.reflect.KClass
  *
  * To run a [Worker], call [awaitWorkerResult]. (A worker is effectively its own [Launcher].)
  */
-class WorkflowPool {
+class WorkflowPool internal constructor() {
+
+  class Factory {
+    fun create(): WorkflowPool = WorkflowPool()
+  }
+
   /**
    * Represents the type parameters of a [Launcher] in reified form.
    *
