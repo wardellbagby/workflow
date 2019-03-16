@@ -179,6 +179,8 @@ final class WorkflowNodeTests: XCTestCase {
             struct State {}
 
             typealias Output = Int
+            
+            typealias Rendering = Void
 
             func makeInitialState() -> WF.State {
                 return State()
@@ -317,18 +319,29 @@ extension CompositeWorkflow.Output: Equatable where A.Output: Equatable, B.Outpu
     }
 }
 
+#if swift(>=5.0)
+
+#else
 extension Never: Equatable {
     public static func ==(lhs: Never, rhs: Never) -> Bool {
         switch (lhs, rhs) {}
     }
 }
+#endif
+
+
 
 
 /// Has no state or output, simply renders a reversed string
 fileprivate struct SimpleWorkflow: Workflow {
+    
     var string: String
 
     struct State {}
+    
+    typealias Output = Never
+    
+    typealias Rendering = String
 
     func makeInitialState() -> State {
         return State()
@@ -399,6 +412,8 @@ extension EventEmittingWorkflow {
 fileprivate struct StateTransitioningWorkflow: Workflow {
 
     typealias State = Bool
+    
+    typealias Output = Never
 
     struct Rendering {
         var toggle: () -> Void

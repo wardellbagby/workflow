@@ -30,11 +30,10 @@ public class AnyWorkflowTests: XCTestCase {
 /// Has no state or output, simply renders a reversed string
 fileprivate struct PassthroughWorkflow<Rendering>: Workflow {
     var child: AnyWorkflow<Rendering, Never>
-}
-
-extension PassthroughWorkflow {
 
     struct State {}
+    
+    typealias Output = Never
 
     func makeInitialState() -> State {
         return State()
@@ -61,6 +60,10 @@ fileprivate struct SimpleWorkflow: Workflow {
 extension SimpleWorkflow {
 
     struct State {}
+    
+    typealias Output = Never
+    
+    typealias Rendering = String
 
     func makeInitialState() -> State {
         return State()

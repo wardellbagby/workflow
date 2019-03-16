@@ -26,5 +26,5 @@ let package = Package(
             dependencies: ["Workflow"],
             path: "swift/Workflow/Tests"),
     ],
-    swiftLanguageVersions: [.v4_2]
+    swiftLanguageVersions: [.v4_2, .v5]
 )

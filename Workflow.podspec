@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
   s.author       = 'Square'
   s.source       = { :git => 'https://github.com/square/workflow.git', :tag => s.version }
 
-  s.swift_versions = ['4.2']
+  s.swift_versions = ['4.2', '5.0']
   s.ios.deployment_target = '9.3'
 
   s.source_files = 'swift/Workflow/Sources/*.swift'
