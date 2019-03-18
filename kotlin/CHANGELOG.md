@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+## Version 0.9.0-kt13
+
+_2019-3-18_
+
+ * Bumps Kotlin to 1.3.21 and coroutines to 1.1.1.
+
 ## Version 0.8.1
 
 _2019-3-15_
