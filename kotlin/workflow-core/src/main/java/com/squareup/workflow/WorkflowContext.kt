@@ -23,8 +23,12 @@ import com.squareup.workflow.util.KTypes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart.UNDISPATCHED
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.Channel.Factory.RENDEZVOUS
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.produceIn
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.reflect.KType
 
@@ -176,6 +180,59 @@ inline fun <StateT : Any, OutputT : Any, reified T> WorkflowContext<StateT, Outp
     key,
     handler
 )
+
+/**
+ * Subscribes to [flow] and invokes [handler] when it emits the next value.
+ *
+ * This allows us to use this method to, for example, monitor a stream of values emitted by a single
+ * fow over a series of state transitions. (Use [key] if you need to work simultaneously with
+ * several [Flow]s of the same type.)
+ * The subscription will be disposed when `compose` returns without passing a [Flow] of the same
+ * type and with the same key to this method.
+ *
+ * ## Experimental Status
+ *
+ * The [Flow] API is still marked experimental, and the compiler will warn you if you use it without
+ * opting in. The Channels API is also experimental, however Flow is much newer than channels,
+ * so this method is marked as experimental to discourage use in production code.
+ *
+ * @param key An optional string key that is used to distinguish between subscriptions of the same
+ * type.
+ */
+@FlowPreview
+inline fun <StateT : Any, OutputT : Any, reified T> WorkflowContext<StateT, OutputT>.onNext(
+  flow: Flow<T>,
+  key: String = "",
+  noinline handler: (ChannelUpdate<T>) -> WorkflowAction<StateT, OutputT>
+) = onNext(flow, KTypes.fromGenericType(Flow::class, T::class), key, handler)
+
+/**
+ * Subscribes to [flow] and invokes [handler] when it emits the next value.
+ *
+ * This allows us to use this method to, for example, monitor a stream of values emitted by a single
+ * flow over a series of state transitions. (Use [key] if you need to work simultaneously with
+ * several [Flow]s of the same type.)
+ * The subscription will be disposed when `compose` returns without passing a [Flow] of the same
+ * type and with the same key to this method.
+ *
+ * ## Experimental Status
+ *
+ * The [Flow] API is still marked experimental, and the compiler will warn you if you use it without
+ * opting in. The Channels API is also experimental, however Flow is much newer than channels,
+ * so this method is marked as experimental to discourage use in production code.
+ *
+ * @param key An optional string key that is used to distinguish between subscriptions of the same
+ * type.
+ */
+@FlowPreview
+fun <StateT : Any, OutputT : Any, T> WorkflowContext<StateT, OutputT>.onNext(
+  flow: Flow<T>,
+  type: KType,
+  key: String = "",
+  handler: (ChannelUpdate<T>) -> WorkflowAction<StateT, OutputT>
+) =
+  // Use a rendezvous channel to propagate backpressure directly.
+  onReceive({ flow.produceIn(this, capacity = RENDEZVOUS) }, type, key, handler)
 
 /**
  * Convenience alias of [WorkflowContext.renderChild] for workflows that don't take input.
