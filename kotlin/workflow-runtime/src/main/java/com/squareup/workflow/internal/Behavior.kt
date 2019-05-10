@@ -19,6 +19,7 @@ import com.squareup.workflow.Worker
 import com.squareup.workflow.Worker.OutputOrFinished
 import com.squareup.workflow.Workflow
 import com.squareup.workflow.WorkflowAction
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 
 /**
@@ -31,7 +32,7 @@ import kotlinx.coroutines.Deferred
 internal data class Behavior<StateT, out OutputT : Any>(
   val childCases: List<WorkflowOutputCase<*, *, StateT, OutputT>>,
   val workerCases: List<WorkerCase<*, StateT, OutputT>>,
-  val nextActionFromEvent: Deferred<WorkflowAction<StateT, OutputT>>
+  val nextActionFromEvent: CompletableDeferred<WorkflowAction<StateT, @UnsafeVariance OutputT>>
 ) {
 
   // @formatter:off
